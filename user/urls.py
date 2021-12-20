@@ -8,6 +8,7 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name='logout'),
     path("register/", views.RegisterView.as_view(), name="register"),
     path("films/", views.FilmList.as_view(), name='film-list'),
+    path('employees/', views.list_employees, name='employee-list'),
 ]
 
 htmx_urlpatterns = [
@@ -15,7 +16,9 @@ htmx_urlpatterns = [
     path('add-film/', views.add_film, name='add-film'),
     path('delete-film/<int:pk>/', views.delete_film, name='delete-film'),
     path('search-film/', views.search_film, name='search-film'),
-    path('clear/', views.clear, name='clear')
+    path('clear/', views.clear, name='clear'),
+    path('id/<int:pk>/', views.set_employee_status_active, name='activate'),
+
 ]
 
 urlpatterns += htmx_urlpatterns

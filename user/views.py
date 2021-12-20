@@ -10,7 +10,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 
 from user.forms import RegisterForm
-from user.models import Film
+from user.models import Film, Employee
 from django.views.generic.list import ListView
 
 # Create your views here.
@@ -87,3 +87,27 @@ def search_film(request):
 
 def clear(request):
     return HttpResponse("")
+
+
+def list_employees(request):
+    employees = Employee.objects.all()
+    return render(request, 'user.html', {'employees': employees})
+
+
+# Update employee status
+
+# def set_employee_status_active(request, pk):
+#     employee = Employee.objects.get(pk=pk)
+#     employee.status = 'Active'
+#     employee.save()
+#     return render(request, 'user.html')
+
+
+def set_employee_status_active(request, pk):
+    employee = Employee.objects.get(pk=pk)
+    if employee.status == 'Active':
+        employee.status = 'Inactive'
+    else:
+        employee.status = 'Active' 
+    employee.save()
+    return render(request, 'user.html', {'employees': Employee.objects.all()})
