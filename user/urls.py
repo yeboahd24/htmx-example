@@ -18,7 +18,8 @@ htmx_urlpatterns = [
     path('search-film/', views.search_film, name='search-film'),
     path('clear/', views.clear, name='clear'),
     path('id/<int:pk>/', views.set_employee_status_active, name='activate'),
-
+    path('activate/', views.activate, name='active'),
+    path('deactivate/', views.deactivate, name='deactive'),
 ]
 
 urlpatterns += htmx_urlpatterns

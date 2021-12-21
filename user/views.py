@@ -111,3 +111,27 @@ def set_employee_status_active(request, pk):
         employee.status = 'Active' 
     employee.save()
     return render(request, 'user.html', {'employees': Employee.objects.all()})
+
+def activate(request):
+    if request.method == 'POST':
+       ids = request.POST.getlist('ids')
+       for id in ids:
+           int_id = int(id)
+           employee = Employee.objects.get(pk=int_id)
+           employee.status = 'Active'
+           employee.save()
+        
+    return render(request, 'bulk.html', {'employees': Employee.objects.all()})
+  
+  
+  
+def deactivate(request):
+    if request.method == 'POST':
+       ids = request.POST.getlist('ids')
+       for id in ids:
+           int_id = int(id)
+           employee = Employee.objects.get(pk=int_id)
+           employee.status = 'Inactive'
+           employee.save()
+        
+    return render(request, 'bulk.html', {'employees': Employee.objects.all()})
