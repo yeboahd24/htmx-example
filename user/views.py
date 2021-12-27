@@ -1,4 +1,4 @@
-from django.http.response import HttpResponse, HttpResponsePermanentRedirect
+from django.http.response import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
@@ -8,17 +8,20 @@ from django.contrib import messages
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-
-from user.forms import RegisterForm
+from django.views.generic.edit import UpdateView
+from user.forms import RegisterForm, EmployeeForm
 from user.models import Film, Employee
 from django.views.generic.list import ListView
+
 
 # Create your views here.
 class IndexView(TemplateView):
     template_name = 'index.html'
-    
+
+
 class Login(LoginView):
     template_name = 'registration/login.html'
+
 
 class RegisterView(FormView):
     form_class = RegisterForm
@@ -47,13 +50,14 @@ def check_username(request):
     else:
         return HttpResponse("<div id='username-error' class='success'>This username is available</div>")
 
+
 @login_required
 def add_film(request):
     name = request.POST.get('filmname')
-    
+
     # add film
     film = Film.objects.get_or_create(name=name)[0]
-    
+
     # add the film to the user's list
     request.user.films.add(film)
 
@@ -61,6 +65,7 @@ def add_film(request):
     films = request.user.films.all()
     messages.success(request, f"Added {name} to list of films")
     return render(request, 'partials/film-list.html', {'films': films})
+
 
 @require_http_methods(['DELETE'])
 @login_required
@@ -71,6 +76,7 @@ def delete_film(request, pk):
     # return template fragment with all the user's films
     films = request.user.films.all()
     return render(request, 'partials/film-list.html', {'films': films})
+
 
 @login_required
 def search_film(request):
@@ -84,6 +90,7 @@ def search_film(request):
     )
     context = {"results": results}
     return render(request, 'partials/search-results.html', context)
+
 
 def clear(request):
     return HttpResponse("")
@@ -108,9 +115,10 @@ def set_employee_status_active(request, pk):
     if employee.status == 'Active':
         employee.status = 'Inactive'
     else:
-        employee.status = 'Active' 
+        employee.status = 'Active'
     employee.save()
     return render(request, 'user.html', {'employees': Employee.objects.all()})
+
 
 def activate(request):
     if request.method == 'POST':
@@ -120,11 +128,10 @@ def activate(request):
            employee = Employee.objects.get(pk=int_id)
            employee.status = 'Active'
            employee.save()
-        
+
     return render(request, 'bulk.html', {'employees': Employee.objects.all()})
-  
-  
-  
+
+
 def deactivate(request):
     if request.method == 'POST':
        ids = request.POST.getlist('ids')
@@ -133,5 +140,18 @@ def deactivate(request):
            employee = Employee.objects.get(pk=int_id)
            employee.status = 'Inactive'
            employee.save()
-        
+
     return render(request, 'bulk.html', {'employees': Employee.objects.all()})
+
+
+class EmployeeUpdate(UpdateView):
+    model = Employee
+    fields = ['name']
+    template_name = 'edit-user.html'
+    context_object_name = 'form'
+    success_url = reverse_lazy('list')
+
+
+def employee_view(request):
+    employee = Employee.objects.all()
+    return render(request, 'edit.html', {'employees': employee})

@@ -9,6 +9,7 @@ urlpatterns = [
     path("register/", views.RegisterView.as_view(), name="register"),
     path("films/", views.FilmList.as_view(), name='film-list'),
     path('employees/', views.list_employees, name='employee-list'),
+    path('list/', views.employee_view, name='list'),
 ]
 
 htmx_urlpatterns = [
@@ -20,6 +21,7 @@ htmx_urlpatterns = [
     path('id/<int:pk>/', views.set_employee_status_active, name='activate'),
     path('activate/', views.activate, name='active'),
     path('deactivate/', views.deactivate, name='deactive'),
+    path('edit/<int:pk>/', views.EmployeeUpdate.as_view(), name='edit'),
 ]
 
 urlpatterns += htmx_urlpatterns

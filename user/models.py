@@ -9,10 +9,10 @@ class User(AbstractUser):
 class Film(models.Model):
     name = models.CharField(max_length=128)
     users = models.ManyToManyField(User, related_name='films')
-    
+
     def __str__(self):
         return self.name
-    
+
 
 
 STATUS = (
@@ -22,6 +22,6 @@ STATUS = (
 class Employee(models.Model):
     name = models.CharField(max_length=128)
     status = models.CharField(max_length=128, default='Active', choices=STATUS)
-    
+
     def __str__(self):
         return self.name
