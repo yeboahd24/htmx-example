@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'user',
     'widget_tweaks',
     'django_extensions',
-    
+    'rest_framework.authtoken'
+
 ]
 
 MIDDLEWARE = [
