@@ -9,8 +9,8 @@ from django.views.decorators.http import require_http_methods
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import UpdateView
-from user.forms import RegisterForm, EmployeeForm
-from user.models import Film, Employee
+from user.forms import RegisterForm, EmployeeForm, MarriedForm
+from user.models import Film, Employee, Married
 from django.views.generic.list import ListView
 
 
@@ -181,3 +181,28 @@ def employee_view(request):
 def random_employees(request):
     employees = Employee.objects.all().order_by('?')[:3]
     return render(request, 'auto_user.html', {'employees': employees})
+
+# Married
+def married(request):
+    if request.method == 'POST':
+        form = Married()
+        
+        form.name = request.POST.get('name')
+        form.status = request.POST.get('status')
+        form.wife = request.POST.get('wife')
+
+        form.save()
+        return HttpResponse('Thank you for your input')
+    else:
+        return render(request, 'married.html')
+
+
+def married_htmx(request):
+    if request.method == 'POST':
+        form = MarriedForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponse('Thank you for your input')
+    else:
+        form = MarriedForm()
+    return render(request, 'married.html', {'form': form})

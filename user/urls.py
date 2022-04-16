@@ -10,7 +10,7 @@ urlpatterns = [
     path("films/", views.FilmList.as_view(), name='film-list'),
     path('employees/', views.list_employees, name='employee-list'),
     path('list/', views.employee_view, name='list'),
-    # path('api-token-auth/', views.CustomAuthToken.as_view()),
+    path('married/', views.married, name="married"),
     path('api-token-auth/', rest_framework_views.obtain_auth_token),
 ]
 
@@ -25,6 +25,7 @@ htmx_urlpatterns = [
     path('deactivate/', views.deactivate, name='deactive'),
     path('edit/<int:pk>/', views.EmployeeUpdate.as_view(), name='edit'),
     path('random/', views.random_employees, name='random'),
+    path('married_htmx/', views.married_htmx, name='married-htmx'),
 ]
 
 urlpatterns += htmx_urlpatterns

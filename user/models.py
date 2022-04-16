@@ -35,3 +35,17 @@ class Employee(models.Model):
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
+
+
+MARRIED_STATUS = (
+    ('Married', 'Married'),
+    ('Single', 'Single'),
+)
+
+class Married(models.Model):
+    name = models.CharField(max_length=128)
+    status = models.CharField(max_length=128, default='Married', choices=MARRIED_STATUS)
+    wife = models.CharField(max_length=128, blank=True)
+
+    def __str__(self):
+        return self.name

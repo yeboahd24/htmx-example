@@ -1,0 +1,128 @@
+
+
+<!DOCTYPE html>
+{% load widget_tweaks %}
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movie App</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+
+    <!-- Custom CSS -->
+
+    <!-- jQuery and Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.6.0"></script>
+  </head>
+
+  <body style="padding: 50px">
+    <div class="container">
+        <div class="align-center col-12">
+            <div class=>
+                
+                <form  id="#married" hx-post="{% url 'married' %}">
+                    {% csrf_token %}
+        
+                   
+                    <div>
+                        <label for="name" class="mr-2">Name</label>
+                        <input type="text" name="name" id="name" class="form-control" />
+                    </div>
+
+            
+                    <div>
+                        <label for="statud" class="mr-2">Status</label>
+                        <select name="status" id="status" class="form-control">
+                            <option value="Married">Married</option>
+                            <option value="Single">Single</option>
+                        </select>
+                    </div>
+
+
+                    <div>
+                        <label for="wife" class="mr-2">Wife</label>
+                        <input type="text" name="wife" id="wife" class="form-control" />
+                    </div><br><br>
+
+                    <button type="submit" class="btn btn-success btn-sm">Submit</button>
+                
+                
+                </form>
+            </div>
+          
+            
+            
+        </div>
+
+    
+
+    <script>
+      document.body.addEventListener("htmx:configRequest", (event) => {
+        event.detail.headers["X-CSRFToken"] = "{{ csrf_token }}";
+      });
+
+      // hide wife and it label
+        // document.querySelector("#wife").style.display = "none";
+        // document.querySelector("#wife").parentElement.style.display = "none";
+    // if status is changed to married show wife and it label
+      document.querySelector("#status").addEventListener("change", (event) => {
+        if (event.target.value === "Married") {
+          document.querySelector("#wife").parentElement.style.display = "block";
+        } else {
+          document.querySelector("#wife").parentElement.style.display = "none";
+        }
+      });
+
+      // save name, status and wife with ajax
+    
+
+        $("#married").submit(function(e) {
+            e.preventDefault();
+            $.ajax({
+                headers: {
+                    'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val()
+                },
+                type: "POST",
+                dataType: "json",
+                url: $(this).attr("action"),
+                data: $(this).serialize(),
+                success: function(data) {
+                    console.log(data);
+                },
+                error: function(data) {
+                    console.log(data);
+                }
+            });
+        });
+    </script>
+
+  </body>
+</html>
