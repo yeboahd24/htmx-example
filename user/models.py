@@ -5,6 +5,7 @@ from django.dispatch import receiver
 # Create your models here.
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 class User(AbstractUser):
     pass
@@ -29,6 +30,28 @@ class Employee(models.Model):
     def __str__(self):
         return self.name
 
+
+
+
+
+class Movie(models.Model):
+
+    title = models.CharField(max_length=40, unique=True)
+
+    year = models.PositiveSmallIntegerField(
+        validators=[
+            MinValueValidator(1895),
+            MaxValueValidator(2050),
+        ]
+    )
+
+    rating = models.PositiveSmallIntegerField(choices=(
+        (1, "★☆☆☆☆"),
+        (2, "★★☆☆☆"),
+        (3, "★★★☆☆"),
+        (4, "★★★★☆"),
+        (5, "★★★★★"),
+    ))
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)

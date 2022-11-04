@@ -9,10 +9,12 @@ from django.views.decorators.http import require_http_methods
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import UpdateView
-from user.forms import RegisterForm, EmployeeForm, MarriedForm
-from user.models import Film, Employee, Married
+from user.forms import RegisterForm, EmployeeForm, MarriedForm, MovieForm
+from user.models import Film, Employee, Married, Movie
 from django.views.generic.list import ListView
-
+from django.shortcuts import get_object_or_404
+import json
+from django.views.decorators.http import require_POST
 
 # API Views
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -51,6 +53,8 @@ class RegisterView(FormView):
     def form_valid(self, form):
         form.save()  # save the user
         return super().form_valid(form)
+
+
 
 
 class FilmList(LoginRequiredMixin, ListView):
@@ -206,3 +210,74 @@ def married_htmx(request):
     else:
         form = MarriedForm()
     return render(request, 'married.html', {'form': form})
+
+
+
+# Movie view
+def index(request):
+    return render(request, 'movie_index.html')
+
+
+
+def movie_list(request):
+    return render(request, 'movie_list.html', {
+        'movies': Movie.objects.all(),
+    })
+
+
+def add_movie(request):
+    if request.method == "POST":
+        form = MovieForm(request.POST)
+        if form.is_valid():
+            movie = form.save()
+            return HttpResponse(
+                status=204,
+                headers={
+                    'HX-Trigger': json.dumps({
+                        "movieListChanged": None,
+                        "showMessage": f"{movie.title} added."
+                    })
+                })
+    else:
+        form = MovieForm()
+    return render(request, 'movie_form.html', {
+        'form': form,
+    })
+
+
+def edit_movie(request, pk):
+    movie = get_object_or_404(Movie, pk=pk)
+    if request.method == "POST":
+        form = MovieForm(request.POST, instance=movie)
+        if form.is_valid():
+            form.save()
+            return HttpResponse(
+                status=204,
+                headers={
+                    'HX-Trigger': json.dumps({
+                        "movieListChanged": None,
+                        "showMessage": f"{movie.title} updated."
+                    })
+                }
+            )
+    else:
+        form = MovieForm(instance=movie)
+    return render(request, 'movie_form.html', {
+        'form': form,
+        'movie': movie,
+    })
+
+
+@ require_POST
+def remove_movie(request, pk):
+    movie = get_object_or_404(Movie, pk=pk)
+    movie.delete()
+    return HttpResponse(
+        status=204,
+        headers={
+            'HX-Trigger': json.dumps({
+                "movieListChanged": None,
+                "showMessage": f"{movie.title} deleted."
+            })
+        })
+

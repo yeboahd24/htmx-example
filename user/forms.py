@@ -1,5 +1,5 @@
 from django.contrib.auth.forms import UserCreationForm
-from user.models import User, Employee, Married
+from user.models import User, Employee, Married, Movie
 from django import forms
 from django.forms import fields, widgets
 
@@ -28,3 +28,9 @@ class MarriedForm(forms.ModelForm):
         }
 
    
+
+class MovieForm(forms.ModelForm):
+
+    class Meta:
+        model = Movie
+        fields = ['title', 'year', 'rating']

@@ -12,6 +12,11 @@ urlpatterns = [
     path('list/', views.employee_view, name='list'),
     path('married/', views.married, name="married"),
     path('api-token-auth/', rest_framework_views.obtain_auth_token),
+    path('', views.index),
+    path('movies', views.movie_list, name='movie_list'),
+    path('movies/add', views.add_movie, name='add_movie'),
+    path('movies/<int:pk>/remove', views.remove_movie, name='remove_movie'),
+    path('movies/<int:pk>/edit', views.edit_movie, name='edit_movie'),
 ]
 
 htmx_urlpatterns = [
